@@ -34,11 +34,15 @@ platform :android do
     detekt_res = Linter.detekt(throw_if_fails: false)
     Fastlane::UI.error('Detekt failed') unless detekt_res
 
-    Fastlane::UI.user_error!("Failed detekt = #{detekt_res} lint = #{lint_res}") unless detekt_res && lint_res
+    Fastlane::UI.user_error!("Lint failed. Result detekt = #{detekt_res} lint = #{lint_res}") unless detekt_res && lint_res
   end
 
   desc 'Run unit tests'
   lane :unitTest do
+    UI.message('Skip safe merge, the branch is main') if SafeMerge.main_branch?
+
+    SafeMerge.merge_main_no_commit unless SafeMerge.main_branch?
+
     UnitTests.run
   end
 
