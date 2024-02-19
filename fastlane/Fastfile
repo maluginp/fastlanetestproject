@@ -13,26 +13,42 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
+require_relative 'modules/linter'
+require_relative 'modules/unit_tests'
+require_relative 'modules/safe_merge'
+require_relative 'modules/qa_build'
+require_relative 'modules/deploy'
+
 default_platform(:android)
 
 platform :android do
-  desc "Runs all the tests"
-  lane :test do
-    gradle(task: "test")
+  desc 'Check linter rules'
+  lane :lint do
+    UI.message('Skip safe merge, the branch is main') if SafeMerge.main_branch?
+
+    SafeMerge.merge_main_no_commit unless SafeMerge.main_branch?
+
+    lint_res = Linter.lint(throw_if_fails: false)
+    Fastlane::UI.error('Lint failed') unless lint_res
+
+    detekt_res = Linter.detekt(throw_if_fails: false)
+    Fastlane::UI.error('Detekt failed') unless detekt_res
+
+    Fastlane::UI.user_error!("Failed detekt = #{detekt_res} lint = #{lint_res}") unless detekt_res && lint_res
   end
 
-  desc "Submit a new Beta Build to Crashlytics Beta"
-  lane :beta do
-    gradle(task: "clean assembleRelease")
-    crashlytics
-  
-    # sh "your_script.sh"
-    # You can also use other beta testing services here
+  desc 'Run unit tests'
+  lane :unitTest do
+    UnitTests.run
   end
 
-  desc "Deploy a new version to the Google Play"
+  desc 'Submit release builds to QA via Slack'
+  lane :qa do
+    QABuild.run(debug: true)
+  end
+
+  desc 'Deploy a new version to the Google Play'
   lane :deploy do
-    gradle(task: "clean assembleRelease")
-    upload_to_play_store
+    Deploy.run(debug: true)
   end
 end
