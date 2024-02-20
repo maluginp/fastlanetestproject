@@ -43,7 +43,6 @@ module Deploy
 
       thread.attach_file('Bundle file', completed_aab_path, 'app.aab')
 
-
       unless debug
         Fastlane::Actions::UploadToPlayStoreAction.run(
           aab: completed_aab_path,
@@ -58,11 +57,6 @@ module Deploy
       raise # re-raise
     end
 
-
-
-
-
   end
-
 
 end
