@@ -2,7 +2,6 @@ require 'fastlane'
 
 # Manage slack thread for building
 class BuildingSlackThread
-  include Fastlane::Actions
 
   attr_accessor :api_token, :thread_ts, :thread_channel, :debug
 
@@ -13,7 +12,7 @@ class BuildingSlackThread
       return BuildingSlackThread.new(api_token, channel, message, debug: debug)
     end
 
-    thread_result = PostToSlackAction.run(
+    thread_result = Fastlane::Actions::PostToSlackAction.run(
       api_token: @api_token,
       message: message,
       success: true,
@@ -45,7 +44,7 @@ class BuildingSlackThread
 
     return if @debug
 
-    FileUploadToSlackAction.run(
+    Fastlane::Actions::FileUploadToSlackAction.run(
       api_token: @api_token,
       initial_comment: message,
       file_path: file_path,
@@ -61,7 +60,7 @@ class BuildingSlackThread
 
     return if @debug
 
-    UpdateSlackMessageAction.run(
+    Fastlane::Actions::UpdateSlackMessageAction.run(
       ts: @thread_ts,
       api_token: @api_token,
       message: message,
@@ -78,7 +77,7 @@ class BuildingSlackThread
 
     return if @debug
 
-    UpdateSlackMessageAction.run(
+    Fastlane::Actions::UpdateSlackMessageAction.run(
       ts: @thread_ts,
       api_token: @api_token,
       message: message,

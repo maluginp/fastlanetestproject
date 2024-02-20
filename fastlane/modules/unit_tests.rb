@@ -2,10 +2,9 @@ require 'fastlane'
 
 # Unit test methods
 module UnitTests
-  include Fastlane::Actions
 
   def self.run(throw_if_fails: true)
-    GradleAction.run(
+    Fastlane::Actions::GradleAction.run(
       task: 'test',
       project_dir: '../',
       print_command: true,

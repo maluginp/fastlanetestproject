@@ -20,12 +20,8 @@ module SafeMerge
         '--no-ff'
       ]
 
-      # execute our command
-      return command.join(' ') if Fastlane::Helper.test?
-
       Fastlane::Actions.sh(command.join(' '))
       Fastlane::UI.success("Successfully merged #{main_branch} (main branch) to #{local_git_branch}")
-
   end
 
   def self.fetch_local_branch

@@ -2,10 +2,9 @@ require 'fastlane'
 
 # Linter methods
 module Linter
-  include Fastlane::Actions
 
   def self.detekt(throw_if_fails: true)
-    GradleAction.run(
+    Fastlane::Actions::GradleAction.run(
       task: 'detekt',
       project_dir: '../',
       print_command: true,
@@ -19,7 +18,7 @@ module Linter
   end
 
   def self.lint(throw_if_fails: true)
-    GradleAction.run(
+    Fastlane::Actions::GradleAction.run(
       task: 'lint',
       project_dir: '../',
       print_command: true,
